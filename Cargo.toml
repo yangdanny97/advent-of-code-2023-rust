@@ -1,0 +1,6 @@
+[package]
+name = "advent_of_code_2023_rust"
+version = "0.0.1"
+edition = "2021"
+
+[dependencies]
