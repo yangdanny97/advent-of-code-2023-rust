@@ -19,17 +19,15 @@ pub fn part1() {
         if trimmed.is_empty() {
             continue;
         }
-        let game_split = trimmed.split(':').collect::<Vec<_>>();
-        let (first_part, second_part) = (game_split[0], game_split[1]);
+        let (first_part, second_part) = trimmed.split_once(':').unwrap();
         let game_number: i64 = first_part.split(' ').collect::<Vec<_>>()[1]
             .parse()
             .unwrap();
         let mut all_valid = true;
         let contents = second_part.split(|c| c == ',' || c == ';').collect::<Vec<_>>();
         for cubes in contents {
-            let cubes_split = cubes.trim().split(' ').collect::<Vec<_>>();
-            let count: i64 = cubes_split[0].parse().unwrap();
-            let color = cubes_split[1];
+            let (count_str, color) = cubes.trim().split_once(' ').unwrap();
+            let count: i64 = count_str.parse().unwrap();
             let valid = match color {
                 "red" => count <= 12,
                 "green" => count <= 13,
@@ -56,15 +54,14 @@ pub fn part2() {
         if trimmed.is_empty() {
             continue;
         }
-        let second_part = trimmed.split(':').collect::<Vec<_>>()[1];
+        let (_, second_part) = trimmed.split_once(':').unwrap();
         let contents = second_part.split(|c| c == ',' || c == ';').collect::<Vec<_>>();
         let mut min_red: i64 = 0;
         let mut min_blue: i64 = 0;
         let mut min_green: i64 = 0;
         for cubes in contents {
-            let cubes_split = cubes.trim().split(' ').collect::<Vec<_>>();
-            let count: i64 = cubes_split[0].parse().unwrap();
-            let color = cubes_split[1];
+            let (count_str, color) = cubes.trim().split_once(' ').unwrap();
+            let count: i64 = count_str.parse().unwrap();
             match color {
                 "red" => {
                     min_red = min_red.max(count);
