@@ -20,32 +20,24 @@ pub fn part1() {
             continue;
         }
         let game_split = trimmed.split(':').collect::<Vec<_>>();
-        let game_number: i64 = game_split
-            .first()
-            .unwrap()
-            .split(' ')
-            .collect::<Vec<_>>()
-            .get(1)
-            .unwrap()
+        let (first_part, second_part) = (game_split[0], game_split[1]);
+        let game_number: i64 = first_part.split(' ').collect::<Vec<_>>()[1]
             .parse()
             .unwrap();
-        let rounds = game_split.get(1).unwrap().split(';').collect::<Vec<_>>();
         let mut all_valid = true;
-        for round in rounds {
-            let contents = round.split(',').collect::<Vec<_>>();
-            for cubes in contents {
-                let cubes_split = cubes.trim().split(' ').collect::<Vec<_>>();
-                let count: i64 = cubes_split.first().unwrap().parse().unwrap();
-                let color = cubes_split.get(1).unwrap();
-                let valid = match *color {
-                    "red" => count <= 12,
-                    "green" => count <= 13,
-                    "blue" => count <= 14,
-                    _ => false,
-                };
-                if !valid {
-                    all_valid = false;
-                }
+        let contents = second_part.split(|c| c == ',' || c == ';').collect::<Vec<_>>();
+        for cubes in contents {
+            let cubes_split = cubes.trim().split(' ').collect::<Vec<_>>();
+            let count: i64 = cubes_split[0].parse().unwrap();
+            let color = cubes_split[1];
+            let valid = match color {
+                "red" => count <= 12,
+                "green" => count <= 13,
+                "blue" => count <= 14,
+                _ => false,
+            };
+            if !valid {
+                all_valid = false;
             }
         }
         if all_valid {
@@ -64,30 +56,27 @@ pub fn part2() {
         if trimmed.is_empty() {
             continue;
         }
-        let game_split = trimmed.split(':').collect::<Vec<_>>();
-        let rounds = game_split.get(1).unwrap().split(';').collect::<Vec<_>>();
+        let second_part = trimmed.split(':').collect::<Vec<_>>()[1];
+        let contents = second_part.split(|c| c == ',' || c == ';').collect::<Vec<_>>();
         let mut min_red: i64 = 0;
         let mut min_blue: i64 = 0;
         let mut min_green: i64 = 0;
-        for round in rounds {
-            let contents = round.split(',').collect::<Vec<_>>();
-            for cubes in contents {
-                let cubes_split = cubes.trim().split(' ').collect::<Vec<_>>();
-                let count: i64 = cubes_split.first().unwrap().parse().unwrap();
-                let color = cubes_split.get(1).unwrap();
-                match *color {
-                    "red" => {
-                        min_red = min_red.max(count);
-                    }
-                    "green" => {
-                        min_green = min_green.max(count);
-                    }
-                    "blue" => {
-                        min_blue = min_blue.max(count);
-                    }
-                    _ => (),
-                };
-            }
+        for cubes in contents {
+            let cubes_split = cubes.trim().split(' ').collect::<Vec<_>>();
+            let count: i64 = cubes_split[0].parse().unwrap();
+            let color = cubes_split[1];
+            match color {
+                "red" => {
+                    min_red = min_red.max(count);
+                }
+                "green" => {
+                    min_green = min_green.max(count);
+                }
+                "blue" => {
+                    min_blue = min_blue.max(count);
+                }
+                _ => (),
+            };
         }
         total += min_red * min_blue * min_green;
     }
