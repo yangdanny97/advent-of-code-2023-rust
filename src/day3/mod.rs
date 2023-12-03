@@ -17,6 +17,41 @@ fn input() -> String {
     )
 }
 
+fn parse_number(mut grid: Vec<Vec<char>>, y: usize, x: usize) -> (Vec<Vec<char>>, i64, usize) {
+    let mut digits: Vec<char> = vec![];
+    let mut d = grid[y][x];
+    let mut dx = x;
+    while d.is_numeric() {
+        digits.push(d);
+        // update grid to avoid double-counting
+        grid[y][dx] = '.';
+        if dx < grid[y].len() - 1 {
+            dx += 1;
+            d = grid[y][dx];
+        } else {
+            break;
+        }
+    }
+    let part_number: i64 = digits.iter().collect::<String>().as_str().parse().unwrap();
+    (grid, part_number, dx)
+}
+
+fn get_neighbors(y: usize, x: usize, dx: usize, ncols: usize) -> Vec<(usize, usize)> {
+    let start: usize = if x > 0 { x - 1 } else { x };
+    let end: usize = dx;
+    let mut neighbors: Vec<(usize, usize)> = vec![];
+    for col in start..=end {
+        if y > 0 {
+            neighbors.push((y - 1, col));
+        }
+        neighbors.push((y, col));
+        if y < (ncols - 1) {
+            neighbors.push((y + 1, col));
+        }
+    }
+    neighbors
+}
+
 pub fn part1() {
     let mut total: i64 = 0;
     let input = input();
@@ -36,34 +71,10 @@ pub fn part1() {
             let item = grid[y][x];
             if item.is_numeric() {
                 // get part number
-                let mut digits: Vec<char> = vec![];
-                let mut d = item;
-                let mut dx = x;
-                while d.is_numeric() {
-                    digits.push(d);
-                    // update grid to avoid double-counting
-                    grid[y][dx] = '.';
-                    if dx < ncols - 1 {
-                        dx += 1;
-                        d = grid[y][dx];
-                    } else {
-                        break;
-                    }
-                }
-                let part_number: i64 = digits.iter().collect::<String>().as_str().parse().unwrap();
+                let (new_grid, part_number, dx) = parse_number(grid, y, x);
+                grid = new_grid;
                 // check neighbors
-                let start: usize = if x > 0 { x - 1 } else { x };
-                let end: usize = dx;
-                let mut neighbors: Vec<(usize, usize)> = vec![];
-                for col in start..=end {
-                    if y > 0 {
-                        neighbors.push((y - 1, col));
-                    }
-                    neighbors.push((y, col));
-                    if y < (ncols - 1) {
-                        neighbors.push((y + 1, col));
-                    }
-                }
+                let neighbors = get_neighbors(y, x, dx, ncols);
                 for (y2, x2) in neighbors {
                     let neighbor_item = grid[y2][x2];
                     if !neighbor_item.is_numeric() && neighbor_item != '.' {
@@ -90,41 +101,17 @@ pub fn part2() {
         .collect();
     let nrows = grid.len();
     let ncols = grid[0].len();
-    // id => (# of adjacent part numbers, gear ratio)
+    // id => (# of adjacent parts, gear ratio if # of adjacent parts is 2 otherwise garbage)
     let mut gear_ratios = HashMap::new();
     for y in 0..nrows {
         for x in 0..ncols {
             let item = grid[y][x];
             if item.is_numeric() {
                 // get part number
-                let mut digits: Vec<char> = vec![];
-                let mut d = item;
-                let mut dx = x;
-                while d.is_numeric() {
-                    digits.push(d);
-                    // update grid to avoid double-counting
-                    grid[y][dx] = '.';
-                    if dx < ncols - 1 {
-                        dx += 1;
-                        d = grid[y][dx];
-                    } else {
-                        break;
-                    }
-                }
-                let part_number: i64 = digits.iter().collect::<String>().as_str().parse().unwrap();
+                let (new_grid, part_number, dx) = parse_number(grid, y, x);
+                grid = new_grid;
                 // check neighbors
-                let start: usize = if x > 0 { x - 1 } else { x };
-                let end: usize = dx;
-                let mut neighbors: Vec<(usize, usize)> = vec![];
-                for col in start..=end {
-                    if y > 0 {
-                        neighbors.push((y - 1, col));
-                    }
-                    neighbors.push((y, col));
-                    if y < (ncols - 1) {
-                        neighbors.push((y + 1, col));
-                    }
-                }
+                let neighbors = get_neighbors(y, x, dx, ncols);
                 // update gear ratios
                 for (y2, x2) in neighbors {
                     let neighbor_item = grid[y2][x2];
