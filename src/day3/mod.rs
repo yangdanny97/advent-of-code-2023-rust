@@ -52,11 +52,8 @@ fn get_neighbors(y: usize, x: usize, dx: usize, ncols: usize) -> Vec<(usize, usi
     neighbors
 }
 
-pub fn part1() {
-    let mut total: i64 = 0;
-    let input = input();
-    let input_str = input.as_str();
-    let mut grid: Vec<Vec<char>> = input_str
+fn parse_grid(input_str: &str) -> Vec<Vec<char>> {
+    let grid: Vec<Vec<char>> = input_str
         .lines()
         .collect::<Vec<_>>()
         .iter()
@@ -64,8 +61,16 @@ pub fn part1() {
         .filter(|line| !line.is_empty())
         .map(|line| line.chars().collect())
         .collect();
+    grid
+}
+
+pub fn part1() {
+    let input = input();
+    let input_str = input.as_str();
+    let mut grid = parse_grid(input_str);
     let nrows = grid.len();
     let ncols = grid[0].len();
+    let mut total: i64 = 0;
     for y in 0..nrows {
         for x in 0..ncols {
             let item = grid[y][x];
@@ -91,14 +96,7 @@ pub fn part1() {
 pub fn part2() {
     let input = input();
     let input_str = input.as_str();
-    let mut grid: Vec<Vec<char>> = input_str
-        .lines()
-        .collect::<Vec<_>>()
-        .iter()
-        .map(|line| line.trim())
-        .filter(|line| !line.is_empty())
-        .map(|line| line.chars().collect())
-        .collect();
+    let mut grid = parse_grid(input_str);
     let nrows = grid.len();
     let ncols = grid[0].len();
     // id => (# of adjacent parts, gear ratio if # of adjacent parts is 2 otherwise garbage)
@@ -110,9 +108,8 @@ pub fn part2() {
                 // get part number
                 let (new_grid, part_number, dx) = parse_number(grid, y, x);
                 grid = new_grid;
-                // check neighbors
-                let neighbors = get_neighbors(y, x, dx, ncols);
                 // update gear ratios
+                let neighbors = get_neighbors(y, x, dx, ncols);
                 for (y2, x2) in neighbors {
                     let neighbor_item = grid[y2][x2];
                     if !neighbor_item.is_numeric() && neighbor_item != '.' {
