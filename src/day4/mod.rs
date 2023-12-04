@@ -55,13 +55,11 @@ pub fn part2() {
         }
         let parts = trimmed.split(|c| c == '|' || c == ':').collect::<Vec<_>>();
         let winning: HashSet<i64> = parts[1]
-            .split(' ')
-            .filter(|n| !n.is_empty())
+            .split_whitespace()
             .map(|n| n.parse().unwrap())
             .collect();
         let have: HashSet<i64> = parts[2]
-            .split(' ')
-            .filter(|n| !n.is_empty())
+            .split_whitespace()
             .map(|n| n.parse().unwrap())
             .collect();
         let matches = winning
