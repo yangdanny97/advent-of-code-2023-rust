@@ -13,12 +13,12 @@ fn input() -> String {
     )
 }
 
-fn score(card: char) -> i64 {
+fn score(card: char, joker: bool) -> i64 {
     match card {
         'A' => 14,
         'K' => 13,
         'Q' => 12,
-        'J' => 11,
+        'J' => if joker { 1 } else { 11 },
         'T' => 10,
         '9' => 9,
         '8' => 8,
@@ -32,9 +32,9 @@ fn score(card: char) -> i64 {
     }
 }
 
-fn cmp_hand(h1: &[char], h2: &[char]) -> Ordering {
+fn cmp_hand(h1: &[char], h2: &[char], joker: bool) -> Ordering {
     for i in 0..5 {
-        let diff = score(h1[i]) - score(h2[i]);
+        let diff = score(h1[i], joker) - score(h2[i], joker);
         if diff != 0 {
             return if diff > 0 {
                 Ordering::Greater
@@ -100,31 +100,12 @@ pub fn part1() {
     hands.sort_by(|(m1, h1, _), (m2, h2, _)| {
         hand_type(m1)
             .cmp(&hand_type(m2))
-            .then_with(|| cmp_hand(h1, h2))
+            .then_with(|| cmp_hand(h1, h2, false))
     });
     for (i, (_, _, bid)) in hands.iter().enumerate() {
         total += (i as i64 + 1) * bid;
     }
     println!("{}", total)
-}
-
-fn score2(card: char) -> i64 {
-    match card {
-        'A' => 14,
-        'K' => 13,
-        'Q' => 12,
-        'T' => 10,
-        '9' => 9,
-        '8' => 8,
-        '7' => 7,
-        '6' => 6,
-        '5' => 5,
-        '4' => 4,
-        '3' => 3,
-        '2' => 2,
-        'J' => 1,
-        _ => 0,
-    }
 }
 
 fn hand_type2(hand: &HashMap<char, i64>) -> i64 {
@@ -143,20 +124,6 @@ fn hand_type2(hand: &HashMap<char, i64>) -> i64 {
     *val += j;
 
     return hand_type(&modified_hand);
-}
-
-fn cmp_hand2(h1: &[char], h2: &[char]) -> Ordering {
-    for i in 0..5 {
-        let diff = score2(h1[i]) - score2(h2[i]);
-        if diff != 0 {
-            return if diff > 0 {
-                Ordering::Greater
-            } else {
-                Ordering::Less
-            };
-        }
-    }
-    Ordering::Equal
 }
 
 pub fn part2() {
@@ -184,7 +151,7 @@ pub fn part2() {
     hands.sort_by(|(m1, h1, _), (m2, h2, _)| {
         hand_type2(m1)
             .cmp(&hand_type2(m2))
-            .then_with(|| cmp_hand2(h1, h2))
+            .then_with(|| cmp_hand(h1, h2, true))
     });
     for (i, (_, _, bid)) in hands.iter().enumerate() {
         total += (i as i64 + 1) * bid;
