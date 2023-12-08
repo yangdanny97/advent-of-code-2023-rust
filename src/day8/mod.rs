@@ -37,7 +37,6 @@ pub fn part1() {
     let mut curr = "AAA";
     let mut mapping = HashMap::new();
     let re = Regex::new(r"[A-Z]+").unwrap();
-    // Use find_iter to iterate over matches
     for line in input_str.lines() {
         let trimmed = line.trim();
         if trimmed.is_empty() {
@@ -96,7 +95,6 @@ pub fn part2() {
     let (instrs, input_str) = input2();
     let mut mapping = HashMap::new();
     let re = Regex::new(r"[0-9A-Z]+").unwrap();
-    // Use find_iter to iterate over matches
     for line in input_str.lines() {
         let trimmed = line.trim();
         if trimmed.is_empty() {
