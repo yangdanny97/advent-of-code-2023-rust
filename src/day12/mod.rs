@@ -73,13 +73,13 @@ fn rec(
             curr = clean(curr2, starting)
         }
         memo.insert((tail, i), total);
-        return (total, curr, memo);
+        (total, curr, memo)
     } else {
         assert!(masked.len() - curr.len() == rem);
         curr = pushn(curr, '.', rem);
         let m = if match_prefix(masked, &curr) { 1 } else { 0 };
         memo.insert((tail, i), m);
-        return (m, clean(curr, starting), memo);
+        (m, clean(curr, starting), memo)
     }
 }
 
@@ -110,7 +110,6 @@ pub fn part2() {
     let mut total: i64 = 0;
     let input = input();
     let input_str = input.as_str();
-    let mut l = 0;
     for line in input_str.lines() {
         let trimmed = line.trim();
         if trimmed.is_empty() {
@@ -123,7 +122,7 @@ pub fn part2() {
             .iter()
             .cycle()
             .take(_masked.len() * 5)
-            .map(|&x| x)
+            .copied()
             .collect::<Vec<_>>();
         masked.pop();
         let _nums = parts[1]
@@ -134,15 +133,11 @@ pub fn part2() {
             .iter()
             .cycle()
             .take(_nums.len() * 5)
-            .map(|&x| x)
+            .copied()
             .collect::<Vec<_>>();
         let sum: usize = nums.iter().sum();
         let space = masked.len() + 1 - sum - nums.len();
         total += rec(&masked, 0, &nums, vec![], space, HashMap::new()).0;
-        l += 1;
-        if l % 100 == 0 {
-            println!("{}", l);
-        }
     }
     println!("{}", total)
 }
