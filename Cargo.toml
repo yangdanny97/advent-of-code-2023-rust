@@ -6,3 +6,4 @@ edition = "2021"
 [dependencies]
 regex = "1.10.2"
 num = "0.4.1"
+pathfinding = "4.6.0"
