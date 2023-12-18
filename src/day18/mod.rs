@@ -93,8 +93,7 @@ pub fn part2() {
         }
         let parts = trimmed.split_whitespace().collect::<Vec<_>>();
         let hex = &parts[2][2..8];
-        // math trick to make perimeter accurately reflect the 0.5m buffer
-        let n = i64::from_str_radix(&hex[0..5], 16).unwrap() * 2;
+        let n = i64::from_str_radix(&hex[0..5], 16).unwrap();
         let dir = hex.chars().last().unwrap();
         perimeter += n;
         match dir {
@@ -126,5 +125,5 @@ pub fn part2() {
         sum += (y1 + y2) * (x1 - x2);
     }
     let area = (sum / 2).abs();
-    println!("{}", (area + perimeter) / 4 + 1)
+    println!("{}", area + perimeter / 2 + 1)
 }
