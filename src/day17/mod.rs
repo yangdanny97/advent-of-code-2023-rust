@@ -103,9 +103,9 @@ impl Pos {
         results
     }
 
-    fn is_goal(&self, grid: &Vec<Vec<usize>>) -> bool {
-        let &Pos(x, y, _, _) = self;
-        x == grid[0].len() - 1 && y == grid.len() - 1
+    fn is_goal(&self, grid: &Vec<Vec<usize>>, min: i64, max: i64) -> bool {
+        let &Pos(x, y, count, _) = self;
+        x == grid[0].len() - 1 && y == grid.len() - 1 && count >= min && count <= max
     }
 }
 
@@ -116,7 +116,7 @@ pub fn part1() {
     let min_dist = dijkstra(
         &Pos(0, 0, 0, Direction::East),
         |p| p.successors(&grid, 0, 3),
-        |p| p.is_goal(&grid),
+        |p| p.is_goal(&grid, 0, 3),
     )
     .unwrap()
     .1;
@@ -130,14 +130,14 @@ pub fn part2() {
     let min_dist_e = dijkstra(
         &Pos(0, 0, 0, Direction::East),
         |p| p.successors(&grid, 4, 10),
-        |p| p.is_goal(&grid),
+        |p| p.is_goal(&grid, 4, 10),
     )
     .unwrap()
     .1;
     let min_dist_s = dijkstra(
         &Pos(0, 0, 0, Direction::South),
         |p| p.successors(&grid, 4, 10),
-        |p| p.is_goal(&grid),
+        |p| p.is_goal(&grid, 4, 10),
     )
     .unwrap()
     .1;
