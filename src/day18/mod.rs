@@ -42,25 +42,25 @@ pub fn part1() {
                     points.insert((x, y - i));
                 }
                 y -= n;
-            },
+            }
             "D" => {
                 for i in 1..=n {
                     points.insert((x, y + i));
                 }
                 y += n;
-            },
+            }
             "L" => {
                 for i in 1..=n {
                     points.insert((x - i, y));
                 }
                 x -= n;
-            },
+            }
             "R" => {
                 for i in 1..=n {
                     points.insert((x + i, y));
                 }
                 x += n;
-            },
+            }
             _ => {}
         }
     }
@@ -100,19 +100,19 @@ pub fn part2() {
             '3' => {
                 points.push((x, y - n));
                 y -= n;
-            },
+            }
             '1' => {
                 points.push((x, y + n));
                 y += n;
-            },
+            }
             '2' => {
                 points.push((x - n, y));
                 x -= n;
-            },
+            }
             '0' => {
                 points.push((x + n, y));
                 x += n;
-            },
+            }
             _ => {}
         }
     }
@@ -121,7 +121,7 @@ pub fn part2() {
     // the points array includes (0, 0) twice at the beginning & end
     for i in 0..points.len() - 2 {
         let (x1, y1) = points[i];
-        let (x2, y2) = points[i+1];
+        let (x2, y2) = points[i + 1];
         sum += (y1 + y2) * (x1 - x2);
     }
     let area = (sum / 2).abs();
