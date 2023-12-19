@@ -63,22 +63,21 @@ fn parse_workflow(input: &str) -> Workflow {
     let name = parts[0];
     let otherwise = parts[parts.len() - 1];
     let mut steps = Vec::new();
-    for i in 1..parts.len() - 1 {
-        let step = parts[i];
+    for step in parts.iter().take(parts.len() - 1).skip(1) {
         let mut chars = step.chars();
         let rating = chars.next().unwrap();
         let op = chars.next().unwrap();
         let step_parts = step[2..].split(':').collect::<Vec<_>>();
         let value = step_parts[0].parse::<i64>().unwrap();
         steps.push(Step {
-            op: op,
-            rating: rating,
-            value: value,
+            op,
+            rating,
+            value,
             next: String::from(step_parts[1]),
         })
     }
     Workflow {
-        steps: steps,
+        steps,
         name: String::from(name),
         otherwise: String::from(otherwise),
     }
@@ -171,7 +170,7 @@ fn split_range(range: Range, rating: char, op: char, value: i64) -> (Option<Rang
             }
             result1.x = (low, value - 1);
             result2.x = (value, high);
-            return (Some(result1), Some(result2));
+            (Some(result1), Some(result2))
         }
         ('x', '>') => {
             let (low, high) = range.x;
@@ -183,7 +182,7 @@ fn split_range(range: Range, rating: char, op: char, value: i64) -> (Option<Rang
             }
             result1.x = (value + 1, high);
             result2.x = (low, value);
-            return (Some(result1), Some(result2));
+            (Some(result1), Some(result2))
         }
         ('m', '<') => {
             let (low, high) = range.m;
@@ -195,7 +194,7 @@ fn split_range(range: Range, rating: char, op: char, value: i64) -> (Option<Rang
             }
             result1.m = (low, value - 1);
             result2.m = (value, high);
-            return (Some(result1), Some(result2));
+            (Some(result1), Some(result2))
         }
         ('m', '>') => {
             let (low, high) = range.m;
@@ -207,7 +206,7 @@ fn split_range(range: Range, rating: char, op: char, value: i64) -> (Option<Rang
             }
             result1.m = (value + 1, high);
             result2.m = (low, value);
-            return (Some(result1), Some(result2));
+            (Some(result1), Some(result2))
         }
         ('a', '<') => {
             let (low, high) = range.a;
@@ -219,7 +218,7 @@ fn split_range(range: Range, rating: char, op: char, value: i64) -> (Option<Rang
             }
             result1.a = (low, value - 1);
             result2.a = (value, high);
-            return (Some(result1), Some(result2));
+            (Some(result1), Some(result2))
         }
         ('a', '>') => {
             let (low, high) = range.a;
@@ -231,7 +230,7 @@ fn split_range(range: Range, rating: char, op: char, value: i64) -> (Option<Rang
             }
             result1.a = (value + 1, high);
             result2.a = (low, value);
-            return (Some(result1), Some(result2));
+            (Some(result1), Some(result2))
         }
         ('s', '<') => {
             let (low, high) = range.s;
@@ -243,7 +242,7 @@ fn split_range(range: Range, rating: char, op: char, value: i64) -> (Option<Rang
             }
             result1.s = (low, value - 1);
             result2.s = (value, high);
-            return (Some(result1), Some(result2));
+            (Some(result1), Some(result2))
         }
         ('s', '>') => {
             let (low, high) = range.s;
@@ -255,9 +254,9 @@ fn split_range(range: Range, rating: char, op: char, value: i64) -> (Option<Rang
             }
             result1.s = (value + 1, high);
             result2.s = (low, value);
-            return (Some(result1), Some(result2));
+            (Some(result1), Some(result2))
         }
-        _ => return (None, None),
+        _ => (None, None),
     }
 }
 
@@ -286,7 +285,7 @@ fn find_range(range: Range, current: &str, workflows: &HashMap<String, Workflow>
     if let Some(r) = curr_range {
         total += find_range(r, workflow.otherwise.as_str(), workflows);
     }
-    return total;
+    total
 }
 
 pub fn part2() {
