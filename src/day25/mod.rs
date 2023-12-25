@@ -58,7 +58,7 @@ fn maximum_adjacency_search(
     (s, t, w)
 }
 
-// merge T into S
+// return updated graph with node t merged into node s
 fn merge(
     mut g: HashMap<String, HashMap<String, i64>>,
     s: &str,
@@ -90,6 +90,9 @@ fn merge(
     g
 }
 
+// computes the reachable nodes in g from s, with the s <-> t edge severed
+// g is a potentially reduced graph, so we use the mapping of merged nodes to original nodes
+// to calculate the actual number of nodes
 fn reachable(
     g: &HashMap<String, HashMap<String, i64>>,
     merges: &HashMap<String, HashSet<String>>,
@@ -111,10 +114,15 @@ fn reachable(
     result.len()
 }
 
+// this is an O(V^3) implementation of the Stoer-Wagner min-cut algorithm
 fn min_cut(mut g: HashMap<String, HashMap<String, i64>>) -> usize {
-    let mut best_cut = i64::MAX;
     let start = g.iter().next().unwrap().0.clone();
+    // weight of min cut
+    let mut best_cut = i64::MAX;
+    // size of partition
     let mut best_partition = 0;
+    // track nodes that have been merged with each other
+    // node name -> set of original nodes it represents
     let mut merges = g
         .keys()
         .map(|k| {
@@ -126,6 +134,7 @@ fn min_cut(mut g: HashMap<String, HashMap<String, i64>>) -> usize {
     while g.len() > 1 {
         let (s, t, w) = maximum_adjacency_search(&g, &start);
         if w < best_cut {
+            // get the partition size by performing DFS from s on a graph without s <-> t
             best_partition = reachable(&g, &merges, &s, &t);
             best_cut = w;
         }
